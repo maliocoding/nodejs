@@ -73,6 +73,54 @@ app.post('/delete',(req, res) => {
 });
  
 //server listening
-app.listen(8000, () => {
-  console.log('Server is running at port 8000');
+app.listen(3000, () => {
+  console.log('Server is running at port 3000');
+});
+
+//----------API----------------
+
+//tampilkan semua data
+app.get('/api/products',(req, res) => {
+  let sql = "SELECT * FROM product";
+  let query = conn.query(sql, (err, results) => {
+    if(err) throw err;
+    res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+  });
+});
+
+//tampilkan data berdasarkan id
+app.get('/api/products/:id',(req,res)=>{
+  let sql="select * from product where product_id="+req.params.id;
+  let query=conn.query(sql,(err,results)=>{
+    if(err) throw err;
+    res.send(JSON.stringify({"status":200,"error":null,"response":results}));
+  });
+});
+
+//input data
+app.post('/api/products',(req, res) => {
+  let data = {product_name: req.body.product_name, product_price: req.body.product_price};
+  let sql = "INSERT INTO product SET ?";
+  let query = conn.query(sql, data,(err, results) => {
+    if(err) throw err;
+    res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+  });
+});
+
+//update data
+app.put('/api/products/:id',(req,res)=>{
+  let sql="UPDATE product set product_name="+conn.escape(req.body.product_name)+", product_price="+conn.escape(req.body.product_price)+" WHERE product_id="+conn.escape(req.params.id);
+  let query=conn.query(sql,(err,results)=>{
+    if(err) throw err;
+    res.send(JSON.stringify({"status":200,"error":null,"response":results}));
+  });
+});
+
+//delete data
+app.delete('/api/products/:id',(req,res)=>{
+  let sql="DELETE from product WHERE product_id="+conn.escape(req.params.id);
+  let query=conn.query(sql,(err,results)=>{
+    if(err) throw err;
+    res.send(JSON.stringify({"status":200,"error":null,"response":results}));
+  });
 });
